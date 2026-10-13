@@ -1,0 +1,8 @@
+{
+  "order": {
+    "order_id": "2001",
+    "customer_id": "C100",
+    "amount": "1500",
+    "status": "paid"
+  }
+}

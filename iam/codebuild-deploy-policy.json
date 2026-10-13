@@ -1,0 +1,36 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DeployTrainingLambda",
+      "Effect": "Allow",
+      "Action": [
+        "lambda:UpdateFunctionCode",
+        "lambda:GetFunction",
+        "lambda:GetFunctionConfiguration",
+        "lambda:InvokeFunction"
+      ],
+      "Resource": [
+        "arn:aws:lambda:ap-south-1:<ACCOUNT_ID>:function:de-cicd-orders-validator-dev"
+      ]
+    },
+    {
+      "Sid": "TrainingBucketAccess",
+      "Effect": "Allow",
+      "Action": ["s3:ListBucket"],
+      "Resource": ["arn:aws:s3:::<BUCKET_NAME>"]
+    },
+    {
+      "Sid": "TrainingBucketObjects",
+      "Effect": "Allow",
+      "Action": ["s3:GetObject", "s3:PutObject"],
+      "Resource": ["arn:aws:s3:::<BUCKET_NAME>/*"]
+    },
+    {
+      "Sid": "GlueIntegrationTest",
+      "Effect": "Allow",
+      "Action": ["glue:GetJob", "glue:GetJobRun", "glue:StartJobRun"],
+      "Resource": "*"
+    }
+  ]
+}

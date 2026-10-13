@@ -1,0 +1,36 @@
+AWS DATA ENGINEERING CI/CD - DAY 2 CLASSROOM CHECKLIST
+
+BEFORE CLASS
+[ ] GitHub account accessible
+[ ] VS Code + Git installed
+[ ] AWS CLI authenticated
+[ ] S3 training bucket created
+[ ] orders.csv uploaded to dev/input/orders/
+[ ] Lambda DEV function created
+[ ] Glue service role created
+[ ] Glue DEV job created and manually tested once
+[ ] GitHub repository created
+[ ] AWS/GitHub connection ready
+
+LIVE CLASS
+[ ] Run pytest locally
+[ ] Push initial repository
+[ ] Explain buildspec.yml
+[ ] Create/configure CodeBuild
+[ ] Run first build manually
+[ ] Verify Lambda update
+[ ] Verify Glue script upload
+[ ] Enable/verify push trigger
+[ ] Change pipeline_version and push
+[ ] Watch automatic green build
+[ ] Intentionally break validation logic and push
+[ ] Show failing unit test prevents deployment
+[ ] Fix and push again
+[ ] Explain integration tests
+[ ] Show GitHub Actions CI workflow
+[ ] Introduce Terraform init/plan/apply/destroy
+
+AFTER CLASS
+[ ] Recap Git -> GitHub -> CodeBuild -> Test -> Deploy
+[ ] Explain DEV -> TEST -> PROD promotion
+[ ] Clean up resources that are no longer required

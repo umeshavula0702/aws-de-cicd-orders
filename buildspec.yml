@@ -1,0 +1,61 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+    commands:
+      - echo "===== INSTALL PHASE ====="
+      - python --version
+      - python -m pip install --upgrade pip
+      - pip install -r requirements-dev.txt
+
+  pre_build:
+    commands:
+      - echo "===== UNIT TEST PHASE ====="
+      - python -m pytest tests/unit -v
+
+  build:
+    commands:
+      - echo "===== BUILD PHASE ====="
+      - rm -f lambda.zip
+      - cd lambda_src
+      - zip -r ../lambda.zip .
+      - cd ..
+      - echo "Lambda package created"
+      - ls -lh lambda.zip
+
+  post_build:
+    commands:
+      - echo "===== DEPLOYMENT PHASE ====="
+      - echo "Deploying Lambda function..."
+      - >
+        aws lambda update-function-code
+        --function-name "$LAMBDA_FUNCTION_NAME"
+        --zip-file fileb://lambda.zip
+        --region "$AWS_REGION"
+      - >
+        aws lambda wait function-updated
+        --function-name "$LAMBDA_FUNCTION_NAME"
+        --region "$AWS_REGION"
+      - echo "Uploading Glue script..."
+      - >
+        aws s3 cp
+        glue/orders_etl.py
+        "s3://$DATA_BUCKET/scripts/$ENV/orders_etl.py"
+        --region "$AWS_REGION"
+      - echo "===== LAMBDA SMOKE TEST ====="
+      - >
+        aws lambda invoke
+        --function-name "$LAMBDA_FUNCTION_NAME"
+        --cli-binary-format raw-in-base64-out
+        --payload '{"order":{"order_id":"CICD-001","customer_id":"AUTO","amount":"100","status":"paid"}}'
+        lambda-response.json
+        --region "$AWS_REGION"
+      - cat lambda-response.json
+      - echo "===== BUILD COMPLETED SUCCESSFULLY ====="
+
+artifacts:
+  files:
+    - lambda.zip
+    - lambda-response.json

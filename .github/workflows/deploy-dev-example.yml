@@ -1,0 +1,40 @@
+name: Deploy DEV Example
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials with OIDC
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: arn:aws:iam::<ACCOUNT_ID>:role/GitHubActionsCICDRole
+          aws-region: ap-south-1
+
+      - name: Package Lambda
+        run: |
+          cd lambda_src
+          zip -r ../lambda.zip .
+          cd ..
+
+      - name: Deploy Lambda
+        run: |
+          aws lambda update-function-code \
+            --function-name de-cicd-orders-validator-dev \
+            --zip-file fileb://lambda.zip
+
+      - name: Deploy Glue script
+        run: |
+          aws s3 cp \
+            glue/orders_etl.py \
+            s3://<YOUR-BUCKET>/scripts/dev/orders_etl.py
